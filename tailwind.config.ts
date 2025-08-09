@@ -18,6 +18,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +64,26 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Quiz specific colors
+				'quiz-blue': 'hsl(var(--quiz-blue))',
+				'quiz-blue-dark': 'hsl(var(--quiz-blue-dark))',
+				'quiz-blue-light': 'hsl(var(--quiz-blue-light))',
+				'quiz-success': 'hsl(var(--quiz-success))',
+				'quiz-error': 'hsl(var(--quiz-error))',
+			},
+			boxShadow: {
+				'quiz': 'var(--quiz-shadow)',
+				'quiz-hover': 'var(--quiz-shadow-hover)',
+				'quiz-button': 'var(--quiz-shadow-button)',
+				'quiz-button-hover': 'var(--quiz-shadow-button-hover)',
+			},
+			backgroundImage: {
+				'quiz-gradient': 'var(--quiz-gradient-primary)',
+				'quiz-bg': 'var(--quiz-gradient-background)',
+			},
+			transitionTimingFunction: {
+				'quiz': 'cubic-bezier(0.4, 0, 0.2, 1)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

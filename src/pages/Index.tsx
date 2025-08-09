@@ -46,6 +46,9 @@ const Index = () => {
     setScore(newScore);
     setIsSubmitted(true);
     
+    // Scroll to top smoothly
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     toast({
       title: "ส่งคำตอบเรียบร้อย",
       description: "ดูผลคะแนนและรีวิวข้อสอบด้านล่าง",
@@ -101,7 +104,7 @@ const Index = () => {
                 size="lg"
                 className="bg-quiz-gradient text-white shadow-quiz-button hover:shadow-quiz-button-hover transition-all duration-300 rounded-xl font-bold text-lg px-12 py-4 uppercase tracking-wide"
               >
-                ส่งคำตอบ
+                Submit
               </Button>
             </div>
           </>

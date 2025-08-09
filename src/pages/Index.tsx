@@ -104,7 +104,7 @@ const Index = () => {
                 size="lg"
                 className="bg-quiz-gradient text-white shadow-quiz-button hover:shadow-quiz-button-hover transition-all duration-300 rounded-xl font-bold text-lg px-12 py-4 uppercase tracking-wide"
               >
-                Submit
+                ส่งคำตอบ
               </Button>
             </div>
           </>

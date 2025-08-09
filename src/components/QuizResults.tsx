@@ -91,36 +91,59 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
     `;
     
     captureDiv.innerHTML = `
-      <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 40px; margin-bottom: 30px;">
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-          <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px;">
-            🏆
-          </div>
-          <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; color: rgba(255,255,255,0.95);">
-            ผลการทดสอบข้อสอบครูผู้ช่วย
-          </h1>
+      <!-- Header Section -->
+      <div style="background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); color: white; text-align: center; padding: 25px; border-radius: 20px 20px 0 0; margin-bottom: 0;">
+        <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px;">ผลการสอบครูผู้ช่วย</h1>
+        <p style="margin: 0; font-size: 1.1rem; opacity: 0.9;">นักเรียน: ออม</p>
+      </div>
+      
+      <!-- Score Section -->
+      <div style="background: #f8fafc; padding: 40px; text-align: center; border-radius: 0;">
+        <div style="font-size: 4rem; font-weight: 800; color: #10b981; margin-bottom: 8px; line-height: 1;">
+          ${score}
+        </div>
+        <div style="font-size: 1.2rem; color: #64748b; margin-bottom: 20px;">
+          จาก ${totalQuestions}
         </div>
         
-        <div style="background: rgba(255,255,255,0.9); color: #1e293b; border-radius: 16px; padding: 30px; margin: 20px 0;">
-          <div style="font-size: 3rem; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
-            ${scoreData.message}
-          </div>
-          <div style="font-size: 1.4rem; font-weight: 600; color: #64748b; margin-bottom: 15px;">
-            ${scoreData.percentage}% ความแม่นยำ
-          </div>
-          <div style="font-size: 1.2rem; color: #475569; line-height: 1.5;">
-            ${scoreData.subtitle}
-          </div>
-        </div>
-        
-        <div style="display: flex; justify-content: space-between; font-size: 1rem; color: rgba(255,255,255,0.8);">
-          <span>📅 ${dateStr}</span>
-          <span>⏰ ${timeStr}</span>
+        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+          <span style="font-size: 2rem; margin-right: 10px;">${score < 10 ? '💪' : score <= 15 ? '⭐' : score <= 18 ? '🏆' : '👑'}</span>
+          <span style="font-size: 1.3rem; font-weight: 600; color: ${score < 10 ? '#f59e0b' : score <= 15 ? '#3b82f6' : score <= 18 ? '#8b5cf6' : '#10b981'};">
+            ${scoreData.percentage}% - ${score < 10 ? 'ต้องปรับปรุง' : score <= 15 ? 'ดี' : score <= 18 ? 'ดีมาก' : 'ยอดเยี่ยม'}
+          </span>
         </div>
       </div>
       
-      <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); font-style: italic;">
-        สำหรับ ออม ❤️
+      <!-- Details Section -->
+      <div style="background: white; padding: 25px; border-radius: 0 0 20px 20px;">
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+          <span style="width: 20px; height: 20px; background: #dbeafe; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">📅</span>
+          <span style="color: #64748b; font-size: 0.95rem;">วันที่ทำแบบทดสอบ:</span>
+          <span style="margin-left: auto; font-weight: 600; color: #1e293b;">${dateStr}</span>
+        </div>
+        
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+          <span style="width: 20px; height: 20px; background: #fde2e8; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">🕐</span>
+          <span style="color: #64748b; font-size: 0.95rem;">เวลา:</span>
+          <span style="margin-left: auto; font-weight: 600; color: #1e293b;">${timeStr}</span>
+        </div>
+        
+        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+          <span style="width: 20px; height: 20px; background: #dcfce7; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">✓</span>
+          <span style="color: #64748b; font-size: 0.95rem;">ตอบถูก:</span>
+          <span style="margin-left: auto; font-weight: 600; color: #10b981;">${score} ข้อ</span>
+        </div>
+        
+        <div style="display: flex; align-items: center; margin-bottom: 20px;">
+          <span style="width: 20px; height: 20px; background: #fecaca; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 12px;">✗</span>
+          <span style="color: #64748b; font-size: 0.95rem;">ตอบผิด:</span>
+          <span style="margin-left: auto; font-weight: 600; color: #ef4444;">${totalQuestions - score} ข้อ</span>
+        </div>
+        
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center;">
+          <div style="color: #64748b; font-size: 0.9rem; margin-bottom: 5px;">แบบทดสอบครูผู้ช่วย - ระบบออนไลน์</div>
+          <div style="color: #94a3b8; font-size: 0.85rem;">สร้างโดย Quiz Champion App</div>
+        </div>
       </div>
     `;
 
@@ -194,7 +217,7 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl font-semibold text-base px-8 border-0"
         >
           <Download className="mr-2 h-5 w-5" />
-          Save Result
+          บันทึกผล
         </Button>
         
         <Button 
@@ -204,7 +227,7 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
           className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-300 rounded-2xl font-semibold text-base px-8"
         >
           <RotateCcw className="mr-2 h-5 w-5" />
-          Try Again
+          ลองใหม่
         </Button>
       </div>
 

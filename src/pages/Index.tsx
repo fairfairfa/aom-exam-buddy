@@ -1,16 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { QuizQuestion } from "@/components/QuizQuestion";
 import { QuizResults } from "@/components/QuizResults";
-import { questions, choiceLabels, shuffleQuestions, Question } from "@/data/questions";
+import SubjectSelection from "./SubjectSelection";
+import { quizSubjects, choiceLabels, shuffleQuestions, Question, convertAnswerToIndex } from "@/data/questions";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const [currentQuestions, setCurrentQuestions] = useState<Question[]>(() => shuffleQuestions(questions));
-  const [userAnswers, setUserAnswers] = useState<(number | null)[]>(new Array(questions.length).fill(null));
+  const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+  const [currentQuestions, setCurrentQuestions] = useState<Question[]>([]);
+  const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [score, setScore] = useState(0);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const { toast } = useToast();
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (selectedSubject && !isSubmitted && startTime) {
+      interval = setInterval(() => {
+        setElapsedTime(Math.floor((Date.now() - startTime.getTime()) / 1000));
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [selectedSubject, isSubmitted, startTime]);
+
+  const handleSelectSubject = (subjectName: string) => {
+    const subject = quizSubjects.find(s => s.name === subjectName);
+    if (subject) {
+      const shuffledQuestions = shuffleQuestions(subject.questions);
+      setCurrentQuestions(shuffledQuestions);
+      setUserAnswers(new Array(shuffledQuestions.length).fill(null));
+      setSelectedSubject(subjectName);
+      setStartTime(new Date());
+      setElapsedTime(0);
+      setIsSubmitted(false);
+      setScore(0);
+    }
+  };
 
   const handleAnswerChange = (questionIndex: number, answer: number) => {
     const newAnswers = [...userAnswers];
@@ -38,7 +66,7 @@ const Index = () => {
     // Calculate score
     let newScore = 0;
     currentQuestions.forEach((question, index) => {
-      if (userAnswers[index] === question.answer) {
+      if (userAnswers[index] === convertAnswerToIndex(question.a)) {
         newScore++;
       }
     });
@@ -56,19 +84,32 @@ const Index = () => {
   };
 
   const handleRetry = () => {
-    setCurrentQuestions(shuffleQuestions(questions));
-    setUserAnswers(new Array(questions.length).fill(null));
+    setSelectedSubject(null);
+    setCurrentQuestions([]);
+    setUserAnswers([]);
     setIsSubmitted(false);
     setScore(0);
+    setStartTime(null);
+    setElapsedTime(0);
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
     toast({
-      title: "เริ่มข้อสอบใหม่",
-      description: "พร้อมทำข้อสอบแล้ว ขอให้โชคดี!",
+      title: "กลับไปเลือกวิชาใหม่",
+      description: "เลือกวิชาที่ต้องการทำข้อสอบ",
     });
   };
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  if (!selectedSubject) {
+    return <SubjectSelection onSelectSubject={handleSelectSubject} />;
+  }
 
   return (
     <div className="min-h-screen bg-quiz-bg py-8 px-4">
@@ -76,8 +117,13 @@ const Index = () => {
         {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2 leading-tight">
-            ข้อสอบครูผู้ช่วย สำหรับ ออม
+            ข้อสอบครูผู้ช่วย: {selectedSubject}
           </h1>
+          {!isSubmitted && (
+            <p className="text-lg text-muted-foreground mt-2">
+              เวลาที่ใช้: {formatTime(elapsedTime)}
+            </p>
+          )}
           <div className="w-24 h-1 bg-quiz-gradient mx-auto rounded-full mt-4"></div>
         </div>
 
@@ -102,7 +148,7 @@ const Index = () => {
               <Button
                 onClick={handleSubmit}
                 size="lg"
-                className="bg-quiz-gradient text-white shadow-quiz-button hover:shadow-quiz-button-hover transition-all duration-300 rounded-xl font-bold text-lg px-12 py-4 uppercase tracking-wide"
+                className="bg-quiz-gradient text-white shadow-quiz-button hover:shadow-quiz-button-hover transition-all duration-300 rounded-xl font-bold text-lg px-12 py-4"
               >
                 ส่งคำตอบ
               </Button>
@@ -115,6 +161,8 @@ const Index = () => {
             questions={currentQuestions}
             userAnswers={userAnswers}
             onRetry={handleRetry}
+            elapsedTime={elapsedTime}
+            selectedSubject={selectedSubject}
           />
         )}
       </div>

@@ -1,4 +1,4 @@
-import { Question, choiceLabels } from "@/data/questions";
+import { Question, choiceLabels, convertAnswerToIndex } from "@/data/questions";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle, Download, RotateCcw, Lightbulb, Trophy, Star, Target, Award } from "lucide-react";
@@ -11,9 +11,17 @@ interface QuizResultsProps {
   questions: Question[];
   userAnswers: (number | null)[];
   onRetry: () => void;
+  elapsedTime?: number;
+  selectedSubject?: string;
 }
 
-export function QuizResults({ score, totalQuestions, questions, userAnswers, onRetry }: QuizResultsProps) {
+export function QuizResults({ score, totalQuestions, questions, userAnswers, onRetry, elapsedTime = 0, selectedSubject = "" }: QuizResultsProps) {
+  
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
   const resultRef = useRef<HTMLDivElement>(null);
   
   const getScoreData = () => {
@@ -239,7 +247,7 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
         
         {questions.map((question, index) => {
           const userAnswer = userAnswers[index];
-          const isCorrect = userAnswer === question.answer;
+          const isCorrect = userAnswer === convertAnswerToIndex(question.a);
           
           return (
             <Card key={index} className="p-6 bg-muted/50 border-0 rounded-xl">
@@ -263,15 +271,15 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
                   <div>
                     <span className="font-medium">คำตอบที่ถูก: </span>
                     <span className="text-quiz-success font-medium">
-                      {choiceLabels[question.answer]} {question.options[question.answer]}
+                      {question.a} {question.choices.find(c => c.startsWith(question.a))?.substring(3)}
                     </span>
                   </div>
                   
                   {userAnswer !== null && (
                     <div>
                       <span className="font-medium">คุณเลือก: </span>
-                      <span className={userAnswer === question.answer ? 'text-quiz-success' : 'text-quiz-error'}>
-                        {choiceLabels[userAnswer]} {question.options[userAnswer]}
+                       <span className={userAnswer === convertAnswerToIndex(question.a) ? 'text-quiz-success' : 'text-quiz-error'}>
+                         {choiceLabels[userAnswer]} {question.choices[userAnswer].substring(3)}
                       </span>
                     </div>
                   )}
@@ -281,7 +289,7 @@ export function QuizResults({ score, totalQuestions, questions, userAnswers, onR
                   <div className="flex items-start gap-2">
                     <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                     <span className="text-sm text-muted-foreground leading-relaxed">
-                      {question.explanation}
+                      {question.e}
                     </span>
                   </div>
                 </div>
